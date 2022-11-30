@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2022 at 04:18 AM
+-- Generation Time: Nov 30, 2022 at 01:53 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.3.0
 
@@ -34,6 +34,10 @@ CREATE TABLE `categories` (
   `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '0-inactive, 1-active'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `categories`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -43,8 +47,13 @@ CREATE TABLE `categories` (
 CREATE TABLE `history` (
   `id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `date_viewed` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `history`
+--
 
 -- --------------------------------------------------------
 
@@ -64,6 +73,10 @@ CREATE TABLE `members` (
   `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '0-inactive, 1-active'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `members`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -76,6 +89,10 @@ CREATE TABLE `orders` (
   `order_date` datetime NOT NULL,
   `member_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `orders`
+--
 
 -- --------------------------------------------------------
 
@@ -90,6 +107,10 @@ CREATE TABLE `order_products` (
   `quantity` int(11) NOT NULL,
   `order_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `order_products`
+--
 
 -- --------------------------------------------------------
 
@@ -107,6 +128,10 @@ CREATE TABLE `products` (
   `location` varchar(200) NOT NULL,
   `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '0-inactive, 1-active'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `products`
+--
 
 -- --------------------------------------------------------
 
@@ -131,7 +156,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `location`, `token_id`, `session_id`, `status`) VALUES
-(1, 'admin@pccollection.com', '$2y$10$.0Kd9Fn0EMu5okDREGdIMe9Ohj0SHqMgFUm6.xYfyUdm9ElsD2PX.', 'Super', 'Admin', '', 'cf1c779070ef639b1d3599876c991702', '7fbe6262cecdb3b558c17c892d09ae01', 1);
+(1, 'admin@pccollection.com', '$2y$10$6CoVwMOoLzdfawXyjx1pMOfNJQ0Nr35chGaXOpYHFiprSNXKeGlBS', 'Super', 'Admin', '', 'da74bff075e690fadf8f3fad76369d5b', 'cdad4dc2c37e0d7e631abab3488af2f6', 1);
 
 --
 -- Indexes for dumped tables
@@ -187,43 +212,43 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `order_products`
 --
 ALTER TABLE `order_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
