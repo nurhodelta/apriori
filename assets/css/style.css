@@ -169,3 +169,8 @@ label.error {
 .apriori-price {
     margin-top: 15px;
 }
+
+.login-logo img {
+    width: 100%;
+    max-width: 150px;
+}

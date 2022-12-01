@@ -1,6 +1,7 @@
 <div class="login-box">
   	<div class="login-logo">
-  	    <b>PC LOGO</b>
+  	    <!-- <b>PC LOGO</b> -->
+        <img src="<?= base_url('assets/img/pc-logo.png') ?>">
   	</div>
   
   	<div class="login-box-body">
