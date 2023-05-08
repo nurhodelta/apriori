@@ -2,7 +2,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1 class="admin-page-title">
-            <i class="fa fa-lock"></i> <span>Admins</span>
+            <i class="fa fa-lock"></i> <span>Users</span>
         </h1>
         <div class="add-btn">
             <button class="btn btn-primary" data-toggle="modal" data-target="#addAdmins"><i class="fa fa-plus-circle"></i> New</button>
@@ -20,6 +20,7 @@
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>
+								<th>User Type</th>
                                 <th>Actions</th>
                             </thead>
                             <tbody>
@@ -66,6 +67,16 @@
                     	<input type="text" class="form-control" id="email" name="email">
                   	</div>
                 </div>
+				<div class="form-group">
+                  	<label for="user_type" class="col-sm-3 control-label">User Type</label>
+
+                  	<div class="col-sm-9">
+                    	<select class="form-control" id="user_type" name="user_type">
+							<option value="0">Staff</option>
+							<option value="1">Admin</option>
+						</select>
+                  	</div>
+                </div>
           	</div>
           	<div class="modal-footer">
             	<button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
@@ -83,7 +94,7 @@
           	<div class="modal-header">
             	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
               		<span aria-hidden="true">&times;</span></button>
-            	<h4 class="modal-title"><b>Edit Admin</b></h4>
+            	<h4 class="modal-title"><b>Edit User</b></h4>
           	</div>
           	<div class="modal-body">
             	<form class="form-horizontal" id="editAdminForm">
@@ -109,6 +120,14 @@
                     	<input type="text" class="form-control" id="edit_lastname" name="edit_lastname">
                   	</div>
                 </div>
+				<div class="form-group">
+                  	<label for="edit_user_type" class="col-sm-3 control-label">User Type</label>
+
+                  	<div class="col-sm-9">
+                    	<select class="form-control" id="edit_user_type" name="edit_user_type">
+						</select>
+                  	</div>
+                </div>
           	</div>
           	<div class="modal-footer">
             	<button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
@@ -126,11 +145,11 @@
           	<div class="modal-header">
             	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
               		<span aria-hidden="true">&times;</span></button>
-            	<h4 class="modal-title"><b>Delete Admin</b></h4>
+            	<h4 class="modal-title"><b>Delete User</b></h4>
           	</div>
           	<div class="modal-body">
                 <div class="text-center">
-                    <h4>Are you sure you want to delete admin?</h4>
+                    <h4>Are you sure you want to delete user?</h4>
                 </div>
           	</div>
           	<div class="modal-footer">

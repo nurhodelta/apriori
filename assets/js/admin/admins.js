@@ -15,7 +15,7 @@ $(function(){
         //Set column definition initialisation properties.
         "columnDefs": [
 	        { 
-	            "targets": [3], 
+	            "targets": [3, 4], 
 	            "orderable": false,
 	        },
         ],
@@ -23,6 +23,16 @@ $(function(){
             { data: "first_name" },
             { data: "last_name" },
             { data: "email" },
+            { data: "user_type",
+	         	render: function (data, type, row) {
+                    if (data == 0) {
+                        return "Staff";
+                    }
+                    if (data == 1) {
+                        return "Admin"
+                    }
+                }
+	        },
             { data: "id",
 	         	render: function (data, type, row) {
                     return '<button class="btn btn-success btn-sm btn-flat editadmin" value="'+data+'" data-toggle="modal" data-target="#editAdmins"><i class="fa fa-edit"></i> Edit</button> <button class="btn btn-danger btn-sm btn-flat deleteadmin" value="'+data+'" data-toggle="modal" data-target="#deleteAdmins"><i class="fa fa-trash"></i> Delete</button>';
@@ -108,6 +118,18 @@ $(function(){
                     $('#edit_firstname').val(admin.first_name);
                     $('#edit_lastname').val(admin.last_name);
                     $('#edit_email').val(admin.email);
+                    var html = '';
+                    var sreq = '';
+                    var areq = '';
+                    if (admin.user_type == 1) {
+                        areq = 'selected';
+                    }
+                    if (admin.user_type == 0) {
+                        sreq = 'selected';
+                    }
+                    html += '<option value="0" '+sreq+'>Staff</option>';
+                    html += '<option value="1" '+areq+'>Admin</option>';
+                    $('#edit_user_type').html(html);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {

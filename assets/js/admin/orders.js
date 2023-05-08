@@ -15,7 +15,7 @@ $(function(){
         //Set column definition initialisation properties.
         "columnDefs": [
 	        { 
-	            "targets": [3], 
+	            "targets": [1, 4], 
 	            "orderable": false,
 	        },
         ],
@@ -25,6 +25,7 @@ $(function(){
                     return  formatDate(data);
                 }
             },
+            { data: "order_number" },
             { data: "member_id", 
                 render: function (data, type, row) {
                     return row.first_name+' '+row.last_name;
@@ -72,7 +73,7 @@ $(function(){
         var html = '<div class="form-group">';
         html += '<label for="" class="col-sm-3 control-label"></label>';
         html += '<div class="col-sm-9 order-product-div">';
-        html += '<div class="order-product-select" style="margin-right:2px"><select class="form-control product-class-select2" id="" name="product_id[]"></select></div>'; 
+        html += '<div class="order-product-select" style="margin-right:3px"><select class="form-control product-class-select2" id="" name="product_id[]"></select></div>'; 
         html += '<div class="order-product-quantity" style="margin-right:3px"><input type="number" class="form-control" min="1" name="quantity[]"></div>';       	
         html += '<div><button type="button" class="btn btn-sm btn-danger order-product-minus"><i class="fa fa-minus"></i></button></div>';
         html += '</div></div>';         	

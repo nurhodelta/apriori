@@ -77,6 +77,11 @@ class Products_model extends CI_Model {
 
     public function addProduct($data) {
         $this->db->insert('products', $data);
+        return $this->db->insert_id();
+    }
+
+    public function addStock($data) {
+        $this->db->insert('incoming_stocks', $data);
     }
 
     public function getProduct($id) {

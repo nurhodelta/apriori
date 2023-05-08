@@ -27,7 +27,7 @@ class Admins extends MY_Controller {
             'first_name', 'last_name', 'email'
         ];
         $where = ['users.status'=>1];
-        $select = 'first_name, last_name, id, email';
+        $select = 'first_name, last_name, id, email, user_type';
         $join = [];
         $join_type = '';
         $search_columns = [
@@ -87,12 +87,13 @@ class Admins extends MY_Controller {
                     'first_name' => $this->input->post('first_name'),
                     'last_name' => $this->input->post('last_name'),
                     'email' => $this->input->post('email'),
+                    'user_type' => $this->input->post('user_type'),
                     'password' => password_hash('123', PASSWORD_DEFAULT)
                 ];
 
                 $this->admin_model->addAdmin($input);
 
-                $output['message'] = 'Admin added successfully';
+                $output['message'] = 'User added successfully';
 
             } catch (Throwable $t) {
                 // Executed only in PHP 7, will not match in PHP 5
@@ -158,11 +159,12 @@ class Admins extends MY_Controller {
             $data = [
                 'first_name' => $this->input->post('edit_firstname'),
                 'last_name' => $this->input->post('edit_lastname'),
+                'user_type' => $this->input->post('edit_user_type'),
             ];
 
             $this->admin_model->updateAdmin($data, $id);
 
-            $output['message'] = 'Admin updated successfully';
+            $output['message'] = 'User updated successfully';
 
         } catch (Throwable $t) {
             // Executed only in PHP 7, will not match in PHP 5
@@ -195,7 +197,7 @@ class Admins extends MY_Controller {
 
             $this->admin_model->updateAdmin($data, $id);
 
-            $output['message'] = 'Admin deleted successfully';
+            $output['message'] = 'User deleted successfully';
 
         } catch (Throwable $t) {
             // Executed only in PHP 7, will not match in PHP 5

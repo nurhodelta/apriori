@@ -24,14 +24,14 @@ class Orders extends MY_Controller {
 
     public function dtorders() {
         $columns = [
-            'order_date', 'first_name', 'total'
+            'order_date', 'order_number', 'first_name', 'total'
         ];
         $where = [];
         $select = 'orders.id AS order_id, orders.*, first_name, last_name';
         $join = ['members'=>'members.id=orders.member_id'];
         $join_type = 'LEFT';
         $search_columns = [
-            'first_name', 'last_name'
+            'first_name', 'last_name', 'order_number'
         ];
 
         $limit = $this->input->post('length');
@@ -95,6 +95,7 @@ class Orders extends MY_Controller {
         $output = ['error'=>false];
 
         $this->load->model('orders_model');
+        $this->load->model('products_model');
 
         try {
 
@@ -104,6 +105,17 @@ class Orders extends MY_Controller {
                 $output['message'] = 'Duplicate products detected';
                 echo json_encode($output);
                 exit();
+            }
+
+            // check if any of the product is out of stock
+            foreach ($this->input->post('product_id') as $index => $product_id) {
+                $product = $this->products_model->getProduct($product_id);
+                if ($product->quantity < $this->input->post('quantity')[$index]) {
+                    $output['error'] = true;
+                    $output['message'] = 'Product quantity lesser than ordered quantity: '.$product->product_name.', Qty: '.$product->quantity;
+                    echo json_encode($output);
+                    exit();
+                }
             }
 
             // insert initial order
@@ -121,7 +133,6 @@ class Orders extends MY_Controller {
 
             // insert order products
             $total = 0;
-            $this->load->model('products_model');
             foreach ($this->input->post('product_id') as $index => $product_id) {
                 $product = $this->products_model->getProduct($product_id);
                 $data = [
@@ -133,11 +144,27 @@ class Orders extends MY_Controller {
                 $add_price = $product->price * $this->input->post('quantity')[$index];
                 $total += $add_price;
                 $this->orders_model->addProductOrder($data);
+                // add outgoing stock
+                $odata = [
+                    'product_id' => $product_id,
+                    'order_id' => $order_id,
+                    'quantity' => $this->input->post('quantity')[$index],
+                    'date_added' => date('Y-m-d H:i:s')
+                ];
+                $this->orders_model->addOutgoingStock($odata);
+                // subtract product quantity
+                $this->load->model('products_model');
+                $pdata = [
+                    'quantity' => $product->quantity - $this->input->post('quantity')[$index]
+                ];
+                $this->products_model->updateProduct($pdata, $product_id);
             }
 
             // update order total
+            $onum = $this->generateRandomString(15-strlen($order_id)).$order_id;
             $tdata = [
-                'total' => $total
+                'total' => $total,
+                'order_number' => $onum
             ];
 
             $this->orders_model->updateOrder($tdata, $order_id);

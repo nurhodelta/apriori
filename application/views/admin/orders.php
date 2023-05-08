@@ -18,6 +18,7 @@
                         <table id="ordersTable" class="table table-bordered table-striped">
                             <thead>
                                 <th>Date</th>
+								<th>Number</th>
                                 <th>Member</th>
                                 <th>Total</th>
                                 <th>Actions</th>

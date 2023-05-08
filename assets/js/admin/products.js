@@ -15,7 +15,7 @@ $(function(){
         //Set column definition initialisation properties.
         "columnDefs": [
 	        { 
-	            "targets": [1, 4], 
+	            "targets": [1, 5], 
 	            "orderable": false,
 	        },
         ],
@@ -34,6 +34,7 @@ $(function(){
             },
             { data: "category_name" },
             { data: "price" },
+            { data: "quantity" },
             { data: "product_id",
 	         	render: function (data, type, row) {
                     return '<a href="'+base_url+'admin/products/view/'+row.slug+'" class="btn btn-info btn-sm btn-flat" target="_blank"><i class="fa fa-search"></i> View</a> <button class="btn btn-success btn-sm btn-flat editproduct" value="'+data+'" data-toggle="modal" data-target="#editProduct"><i class="fa fa-edit"></i> Edit</button> <button class="btn btn-danger btn-sm btn-flat deleteproduct" value="'+data+'" data-toggle="modal" data-target="#deleteProduct"><i class="fa fa-trash"></i> Delete</button>';
@@ -71,6 +72,9 @@ $(function(){
             price: {
                 required: true
             },
+            quantity: {
+                required: true
+            },
             description: {
                 required: true
             },
@@ -85,6 +89,9 @@ $(function(){
             price: {
                 required: "Please input price"
             },
+            quantity: {
+                required: "Please input quantity"
+            },
             description: {
                 required: "Please input description"
             },
@@ -97,6 +104,7 @@ $(function(){
             var product_name = $('#product_name').val();
             var category_id = $('#category_id').val();
             var price = $('#price').val();
+            var quantity = $('#quantity').val();
             var description = $('#description').val();
            
             var formdata = new FormData();
@@ -108,6 +116,7 @@ $(function(){
             formdata.append('product_name', product_name);
             formdata.append('category_id', category_id);
             formdata.append('price', price);
+            formdata.append('quantity', quantity);
             formdata.append('description', description);
 
             $.ajax({

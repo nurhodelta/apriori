@@ -24,7 +24,7 @@ class Products extends MY_Controller {
 
     public function dtproducts() {
         $columns = [
-            'product_name', 'location', 'categories.category_name', 'price'
+            'product_name', 'location', 'categories.category_name', 'price', 'quantity'
         ];
         $where = ['products.status'=>1];
         $select = 'products.id AS product_id, products.*, category_name';
@@ -61,7 +61,7 @@ class Products extends MY_Controller {
             "draw"            => intval($this->input->post('draw')),  
             "recordsTotal"    => intval($totalData),  
             "recordsFiltered" => intval($totalFiltered), 
-            "data"            => $data   
+            "data"            => $data,
         ];
             
         echo json_encode($json_data);
@@ -105,6 +105,7 @@ class Products extends MY_Controller {
                 'category_id' => $this->input->post('category_id'),
                 'product_name' => $this->input->post('product_name'),
                 'price' => $this->input->post('price'),
+                'quantity' => $this->input->post('quantity'),
                 'description' => $this->input->post('description'),
                 'slug' => $this->slugify($this->input->post('product_name'))
             ];
@@ -113,7 +114,17 @@ class Products extends MY_Controller {
                 $input['location'] = $product_photo_data['file_name'];
             }
 
-            $this->products_model->addProduct($input);
+            $product_id = $this->products_model->addProduct($input);
+
+            // add to incoming if quantity is greater than 0
+            if ($this->input->post('quantity') > 0) {
+                $idata = [
+                    'product_id' => $product_id,
+                    'quantity' => $this->input->post('quantity'),
+                    'date_added' => date('Y-m-d H:i:s')
+                ];
+                $this->products_model->addStock($idata);
+            }
 
             $output['message'] = 'Product added successfully';
 
@@ -395,14 +406,12 @@ class Products extends MY_Controller {
 
             if ($associated_products) {
                 arsort($associated_products);
-                $num = 1;
                 foreach ($associated_products as $product_key => $product_value) {
-                    if ($num < 5) {
+                    if ($product_value >= 5) {
                         $return_products[] = $this->products_model->getProduct($product_key);
                     }
-                    $num++;
                 }
-
+            
                 $output['data'] = $return_products;
             } else {
                 $output['error'] = TRUE;

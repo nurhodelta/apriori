@@ -53,4 +53,7 @@ $route['default_controller'] = 'login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+$route['admin/users'] = 'admin/admins';
+$route['admin/incoming-stocks'] = 'admin/incoming';
+$route['admin/outgoing-stocks'] = 'admin/outgoing';
 $route['admin/products/view/(:any)'] = 'admin/products/product/$1';
