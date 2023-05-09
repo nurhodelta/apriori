@@ -67,4 +67,61 @@ class Incoming extends MY_Controller {
         echo json_encode($json_data);
     }
 
+    public function products() {
+        $this->load->model('products_model');
+        if (isset($_GET['term'])) {
+            $search = $_GET['term']['term'];
+            $products = $this->products_model->fetchSearch($search);
+            echo json_encode($products);
+            exit();
+        }
+        $products = $this->products_model->fetch(['status'=>1],[],'',false,'id, product_name AS text');
+        echo json_encode($products);
+    }
+
+    public function insert() {
+        $output = ['error'=>false];
+
+        $this->load->model('products_model');
+
+        try {
+
+            $product_id = $this->input->post('product_id');
+
+            // update product
+            $product = $this->products_model->getProduct($product_id);
+
+            $pdata = [
+                'quantity' => $product->quantity + $this->input->post('quantity')
+            ];
+
+            $this->products_model->updateProduct($pdata, $product_id);
+
+            // add to incoming
+            $data = [
+                'product_id' => $product_id,
+                'quantity' => $this->input->post('quantity'),
+                'date_added' => date('Y-m-d H:i:s')
+            ];
+
+            $this->products_model->addStock($data);
+
+            $output['message'] = 'Incoming stock added successfully';
+
+        } catch (Throwable $t) {
+            // Executed only in PHP 7, will not match in PHP 5
+
+            $output['error'] = TRUE;
+            $output['message'] = 'An error occured';
+
+        } catch (Exception $e) {
+            // Executed only in PHP 5, will not be reached in PHP 7
+
+            $output['error'] = TRUE;
+            $output['message'] = 'An error occured';
+        }
+
+        echo json_encode($output);
+    }
+
 }

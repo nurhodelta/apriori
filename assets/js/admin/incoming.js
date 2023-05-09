@@ -30,6 +30,81 @@ $(function(){
        ],
     });
 
+    $("#product_id").select2({
+        minimumInputLength: 2,
+        ajax: {
+            url: base_url+'admin/incoming/products',
+            dataType: 'json',
+            type: "GET",
+            // quietMillis: 50,
+            data: function (term) {
+                return {
+                    term: term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.text,
+                            id: item.id,
+                        }
+                    })
+                };
+            }
+        }
+    });
+
+    $('#addIncomingForm').validate({
+        rules: {
+            product_id: {
+                required: true
+            },
+            quantity: {
+                required: true
+            }
+        },
+        messages: {
+            product_id: {
+                required: "Please select product"
+            },
+            quantity: {
+                required: "Please input quantity"
+            }
+        }
+    });
+
+    $('#addIncomingForm').submit(function(e){
+        e.preventDefault();
+        if($(this).valid()){
+            var data = $(this).serialize();
+            $.ajax({
+                type: "POST",
+                url: base_url+'admin/incoming/insert',
+                data: data,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#addIncomingBtn').html('<i class="fa fa-spinner fa-spin"></i> Processing');
+                },
+                success: function(res){
+                    $('#addIncomingBtn').html('<i class="fa fa-save"></i> Save');
+                    if(res.error){
+                        Swal.fire('Error!', res.message, 'error');
+                    } else {
+                        Swal.fire('Success!', res.message, 'success');
+                        $('#addIncoming').modal('hide');
+                        $('#addIncomingForm')[0].reset();
+                        incomingTable.ajax.reload();
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('#addIncomingBtn').html('<i class="fa fa-save"></i> Save');
+                    Swal.fire('Error!', 'An error occurred while processing', 'error');
+                },
+            });
+        }
+    });
+
 });
 
 function formatDate(date) {
