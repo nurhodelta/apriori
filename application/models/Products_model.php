@@ -110,6 +110,7 @@ class Products_model extends CI_Model {
     public function fetchSearch($search) {
         $this->db->select('id, product_name AS text');
         $this->db->from('products');
+        $this->db->where('status', 1);
         $this->db->group_start();
             $this->db->like('product_name', $search);
         $this->db->group_end();
