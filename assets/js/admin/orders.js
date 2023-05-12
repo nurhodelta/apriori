@@ -66,18 +66,16 @@ $(function(){
     });
 
     $(document).on('click', '.order-product-minus', function(){
-        $(this).closest('div.form-group').css('display', 'none');
+        $(this).closest('tr').remove();
     });
 
     $('#order-product-add').click(function(){
-        var html = '<div class="form-group">';
-        html += '<label for="" class="col-sm-3 control-label"></label>';
-        html += '<div class="col-sm-9 order-product-div">';
-        html += '<div class="order-product-select" style="margin-right:3px"><select class="form-control product-class-select2" id="" name="product_id[]"></select></div>'; 
-        html += '<div class="order-product-quantity" style="margin-right:3px"><input type="number" class="form-control" min="1" name="quantity[]"></div>';       	
-        html += '<div><button type="button" class="btn btn-sm btn-danger order-product-minus"><i class="fa fa-minus"></i></button></div>';
-        html += '</div></div>';         	
-        $('#order-product-new-div').append(html);
+        var html = '<tr>';
+        html += '<td class="order-product-select"><select class="form-control product-class-select2" id="" name="product_id[]"></td>'; 
+        html += '<td class="order-product-quantity"><input type="number" class="form-control" min="1" name="quantity[]" value="1"></td>';       	
+        html += '<td><button type="button" class="btn btn-sm btn-danger order-product-minus"><i class="fa fa-minus"></i></button></td>';
+        html += '</tr>';         	
+        $('#product-table-body').append(html);
         $('.product-class-select2').select2({
             minimumInputLength: 2,
             ajax: {
@@ -152,32 +150,75 @@ $(function(){
     $('#addOrdersForm').submit(function(e){
         e.preventDefault();
         if($(this).valid()){
-            var data = $(this).serialize();
-            $.ajax({
-                type: "POST",
-                url: base_url+'admin/orders/insert',
-                data: data,
-                dataType: 'json',
-                beforeSend: function(){
-                    $('#addOrdersBtn').html('<i class="fa fa-spinner fa-spin"></i> Processing');
-                },
-                success: function(res){
-                    $('#addOrdersBtn').html('<i class="fa fa-save"></i> Save');
-                    if(res.error){
-                        Swal.fire('Error!', res.message, 'error');
-                    } else {
-                        Swal.fire('Success!', res.message, 'success');
-                        $('#addOrders').modal('hide');
-                        $('#addOrdersForm')[0].reset();
-                        orderstable.ajax.reload();
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    $('#addOrdersBtn').html('<i class="fa fa-save"></i> Save');
-                    Swal.fire('Error!', 'An error occurred while processing', 'error');
-                },
+            // check for duplicate product
+            var values = $("select[name='product_id[]']").map(function(){return $(this).val();}).get();
+           
+            var duplicates = $.grep(values, function(element, index){
+                return $.inArray(element, values) !== index;
             });
+
+            if (duplicates.length === 0) {
+                var data = $(this).serialize();
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: base_url+'admin/orders/display',
+                    data: data,
+                    dataType: 'json',
+                    beforeSend: function(){
+                        $('#addOrdersBtn').html('<i class="fa fa-spinner fa-spin"></i> Processing');
+                    },
+                    success: function(res){
+                        $('#addOrdersBtn').html('<i class="fa fa-check"></i> Submit');
+                        if(res.error){
+                            Swal.fire('Error!', res.message, 'error');
+                        } else {
+                            $('#addOrders').modal('hide');
+                            $('#showOrders').modal('show');
+                            $('#orderTable').html(res.html);
+                            $('#orderTotal').html('<strong>'+res.total+'</strong>');
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $('#addOrdersBtn').html('<i class="fa fa-check"></i> Submit');
+                        Swal.fire('Error!', 'An error occurred while processing', 'error');
+                    },
+                });
+            } else {
+                Swal.fire('Error!', 'Duplicate product(s) selected', 'error');
+            }
         }
+    });
+
+    $(document).on('click', '#returnOrderBtn', function(){
+        $('#showOrders').modal('hide');
+        $('#addOrders').modal('show');
+    });
+
+    $(document).on('click', '#saveOrderBtn', function(){
+        $.ajax({
+            type: "GET",
+            url: base_url+'admin/orders/insert',
+            dataType: 'json',
+            beforeSend: function(){
+                $('#saveOrderBtn').html('<i class="fa fa-spinner fa-spin"></i> Processing');
+            },
+            success: function(res){
+                $('#saveOrderBtn').html('<i class="fa fa-save"></i> Save');
+                if(res.error){
+                    Swal.fire('Error!', res.message, 'error');
+                } else {
+                    Swal.fire('Success!', res.message, 'success');
+                    $('#showOrders').modal('hide');
+                    $('#addOrdersForm')[0].reset();
+                    orderstable.ajax.reload();
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('#saveOrderBtn').html('<i class="fa fa-save"></i> Save');
+                Swal.fire('Error!', 'An error occurred while processing', 'error');
+            },
+        });
     });
 
     $(document).on('click', '.editmember', function(){

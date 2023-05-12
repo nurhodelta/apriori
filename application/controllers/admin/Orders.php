@@ -99,6 +99,81 @@ class Orders extends MY_Controller {
 
         try {
 
+            // check if order session is set
+            if ($this->session->userdata('order')) {
+                // insert order
+                $tz = 'Asia/Manila';
+                $timestamp = time();
+                $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
+                $dt->setTimestamp($timestamp);
+                $odata = [
+                    'total' => $this->session->userdata('total'),
+                    'order_date' => $dt->format('Y-m-d H:i:s'),
+                    'member_id' => $this->session->userdata('member_id'),
+                    'order_number' => $this->generateRandomString(20)
+                ];
+
+                $order_id = $this->orders_model->addOrder($odata);
+
+                // insert order products
+                foreach ($this->session->userdata('order') as $order) {
+                    $product = $this->products_model->getProduct($order['product_id']);
+                    $data = [
+                        'product_id' => $order['product_id'],
+                        'order_price' => $product->price,
+                        'quantity' => $order['quantity'],
+                        'order_id' => $order_id
+                    ];
+                    
+                    $this->orders_model->addProductOrder($data);
+                    // add outgoing stock
+                    $odata = [
+                        'product_id' => $order['product_id'],
+                        'order_id' => $order_id,
+                        'quantity' => $order['quantity'],
+                        'date_added' => date('Y-m-d H:i:s')
+                    ];
+                    $this->orders_model->addOutgoingStock($odata);
+                    
+                    // subtract product quantity
+                    $this->load->model('products_model');
+                    $pdata = [
+                        'quantity' => $product->quantity - $order['quantity']
+                    ];
+                    $this->products_model->updateProduct($pdata, $order['product_id']);
+                }
+
+                $output['message'] = 'Order added successfully';
+
+            } else {
+                $output['error'] = TRUE;
+                $output['message'] = 'Something went wrong. Please make another transaction.';
+            }
+
+        } catch (Throwable $t) {
+            // Executed only in PHP 7, will not match in PHP 5
+
+            $output['error'] = TRUE;
+            $output['message'] = 'An error occured';
+
+        } catch (Exception $e) {
+            // Executed only in PHP 5, will not be reached in PHP 7
+
+            $output['error'] = TRUE;
+            $output['message'] = 'An error occured';
+        }
+
+        echo json_encode($output);
+    }
+
+    public function display() {
+        $output = ['error'=>false];
+
+        $this->load->model('orders_model');
+        $this->load->model('products_model');
+
+        try {
+
             // check if any dupe product
             if (count($this->input->post('product_id')) !== count(array_unique($this->input->post('product_id')))) {
                 $output['error'] = true;
@@ -118,58 +193,44 @@ class Orders extends MY_Controller {
                 }
             }
 
-            // insert initial order
-            $tz = 'Asia/Manila';
-            $timestamp = time();
-            $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
-            $dt->setTimestamp($timestamp);
-            $odata = [
-                'total' => 0,
-                'order_date' => $dt->format('Y-m-d H:i:s'),
-                'member_id' => $this->input->post('member_id')
-            ];
+            $html = '<table class="table table-bordered">';
+            $html .= '<thead>';
+            $html .= '<th>Product Name</th>';
+            $html .= '<th>Price</th>';
+            $html .= '<th>Qty</th>';
+            $html .= '<th>Subtotal</th>';
+            $html .= '</thead>';
+            $html .= '<tbody>';
 
-            $order_id = $this->orders_model->addOrder($odata);
-
-            // insert order products
             $total = 0;
+            $order = [];
+
             foreach ($this->input->post('product_id') as $index => $product_id) {
                 $product = $this->products_model->getProduct($product_id);
-                $data = [
+                $html .= '<tr>';
+                $html .= '<td>'.$product->product_name.'</td>';
+                $html .= '<td>'.$product->price.'</td>';
+                $html .= '<td>'.$this->input->post('quantity')[$index].'</td>';
+                $html .= '<td>'.$this->input->post('quantity')[$index] * $product->price.'</td>';
+                $html .= '</tr>';
+                $total += $this->input->post('quantity')[$index] * $product->price;
+
+                $order[] = [
                     'product_id' => $product_id,
-                    'order_price' => $product->price,
-                    'quantity' => $this->input->post('quantity')[$index],
-                    'order_id' => $order_id
+                    'quantity' => $this->input->post('quantity')[$index]
                 ];
-                $add_price = $product->price * $this->input->post('quantity')[$index];
-                $total += $add_price;
-                $this->orders_model->addProductOrder($data);
-                // add outgoing stock
-                $odata = [
-                    'product_id' => $product_id,
-                    'order_id' => $order_id,
-                    'quantity' => $this->input->post('quantity')[$index],
-                    'date_added' => date('Y-m-d H:i:s')
-                ];
-                $this->orders_model->addOutgoingStock($odata);
-                // subtract product quantity
-                $this->load->model('products_model');
-                $pdata = [
-                    'quantity' => $product->quantity - $this->input->post('quantity')[$index]
-                ];
-                $this->products_model->updateProduct($pdata, $product_id);
             }
 
-            // update order total
-            $onum = $this->generateRandomString(15-strlen($order_id)).$order_id;
-            $tdata = [
-                'total' => $total,
-                'order_number' => $onum
-            ];
+            $html .= '</tbody>';
+            $html .= '<table>';
 
-            $this->orders_model->updateOrder($tdata, $order_id);
+            // save order to session
+            $this->session->set_userdata('order', $order);
+            $this->session->set_userdata('total', $total);
+            $this->session->set_userdata('member_id', $this->input->post('member_id'));
 
-            $output['message'] = 'Order added successfully';
+            $output['html'] = $html;
+            $output['total'] = $total;
 
         } catch (Throwable $t) {
             // Executed only in PHP 7, will not match in PHP 5

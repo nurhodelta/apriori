@@ -140,7 +140,7 @@ label.error {
 
 .order-product-quantity {
     width: 20%;
-	vertical-align: middle;
+	/* vertical-align: middle; */
 }
 
 #apriori {

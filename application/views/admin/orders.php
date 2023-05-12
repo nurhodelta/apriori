@@ -58,10 +58,19 @@
                   	<label for="" class="col-sm-3 control-label">Products</label>
 
                   	<div class="col-sm-9 order-product-div">
-                    	<div class="order-product-select"><select class="form-control product-class-select2" name="product_id[]"></select></div>
-						<div class="order-product-quantity"><input type="number" class="form-control" min="1" name="quantity[]"></div>
-						<div><button type="button" class="btn btn-sm btn-primary" id="order-product-add"><i class="fa fa-plus"></i></button></div>
-						<label id="product_id[]-error" class="error" for="product_id[]" style="display: none;">Please select product</label>
+						<table class="table table-bordered">
+							<tbody id="product-table-body">
+								<tr>
+									<td class="order-product-select">
+										<select class="form-control product-class-select2" name="product_id[]"></select>
+										<label id="product_id[]-error" class="error" for="product_id[]" style="display: none;">Please select product</label>
+									</td>
+									<td class="order-product-quantity"><input type="number" class="form-control" min="1" name="quantity[]" value="1"></td>
+									<td><button type="button" class="btn btn-sm btn-primary" id="order-product-add"><i class="fa fa-plus"></i></button></td>
+								</tr>
+							</tbody>
+						</table>
+						
                   	</div>
                 </div>
 				<div id="order-product-new-div"></div>
@@ -69,7 +78,7 @@
           	</div>
           	<div class="modal-footer">
             	<button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-            	<button type="submit" class="btn btn-primary btn-flat" id="addOrdersBtn"><i class="fa fa-save"></i> Save</button>
+            	<button type="submit" class="btn btn-success btn-flat" id="addOrdersBtn"><i class="fa fa-check"></i> Submit</button>
             	</form>
           	</div>
         </div>
@@ -140,6 +149,27 @@
     </div>
 </div>
 
+<!-- Display Order -->
+<div class="modal fade" id="showOrders">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          	<div class="modal-header">
+            	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              		<span aria-hidden="true">&times;</span></button>
+            	<h4 class="modal-title"><b>Order Details</b></h4>
+          	</div>
+          	<div class="modal-body">
+            	<div id="orderTable"></div>
+				<div>Total: <span id="orderTotal"></span></div>
+          	</div>
+          	<div class="modal-footer">
+			  	<button type="button" class="btn btn-default btn-flat pull-left" id="returnOrderBtn"><i class="fa fa-undo"></i> Return</button>
+            	<button type="button" class="btn btn-primary btn-flat" id="saveOrderBtn"><i class="fa fa-save"></i> Save</button>
+          	</div>
+        </div>
+    </div>
+</div>
+
 <!-- View -->
 <div class="modal fade" id="viewOrder">
     <div class="modal-dialog">
@@ -154,7 +184,6 @@
           	</div>
           	<div class="modal-footer">
             	<button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-            	</form>
           	</div>
         </div>
     </div>
