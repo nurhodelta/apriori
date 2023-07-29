@@ -34,7 +34,8 @@ $(function(){
             { data: "total" },
             { data: "order_id",
 	         	render: function (data, type, row) {
-                    return '<button class="btn btn-info btn-sm btn-flat vieworder" value="'+data+'" data-toggle="modal" data-target="#viewOrder"><i class="fa fa-search"></i> View Products</button>';
+                    // return '<button class="btn btn-info btn-sm btn-flat vieworder" value="'+data+'" data-toggle="modal" data-target="#viewOrder"><i class="fa fa-search"></i> View Products</button>';
+                    return '<a href="'+base_url+'admin/order/'+row.order_number+'" target="_blank"><button class="btn btn-info btn-sm btn-flat"><i class="fa fa-search"></i> View Products</button></a>';
                 }
 	        },
        ],

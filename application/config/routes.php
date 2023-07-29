@@ -57,3 +57,4 @@ $route['admin/users'] = 'admin/admins';
 $route['admin/incoming-stocks'] = 'admin/incoming';
 $route['admin/outgoing-stocks'] = 'admin/outgoing';
 $route['admin/products/view/(:any)'] = 'admin/products/product/$1';
+$route['admin/order/(:any)'] = 'admin/orders/order/$1';

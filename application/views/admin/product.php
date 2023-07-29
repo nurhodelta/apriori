@@ -57,7 +57,7 @@
         </form>
         <div id="product-associate" style="margin-top:30px">
             <span class="product_id" data-value="<?= $product->product_id; ?>">
-            <h3>Frequently Associated Product</h3>
+            <h3>Frequently Bought Together</h3>
             <div id="apriori">No products to show</div>
         </div>
     </section>

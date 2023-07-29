@@ -347,4 +347,25 @@ class Orders extends MY_Controller {
         echo json_encode($output);
     }
 
+    public function order($order_number) {
+        $this->load->model('orders_model');
+        // check if order_number exist
+        $order = $this->orders_model->getOrderByNumber($order_number);
+        if ($order) {
+            // get pproducts
+            $products = $this->orders_model->getProducts($order->id);
+
+            $data['title'] = 'Personal Collections | Order Details';
+            $data['active'] = 'orders';
+            $data['scripts'] = [
+                base_url('assets/js/admin/order_details.js'),
+            ];
+            $data['products'] = $products;
+            $data['order'] = $order;
+            $this->admin('admin/order_details', $data);
+        } else {
+            show_404();
+        }
+    }
+
 }
