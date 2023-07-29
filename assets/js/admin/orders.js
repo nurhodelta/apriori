@@ -209,10 +209,7 @@ $(function(){
                 if(res.error){
                     Swal.fire('Error!', res.message, 'error');
                 } else {
-                    Swal.fire('Success!', res.message, 'success');
-                    $('#showOrders').modal('hide');
-                    $('#addOrdersForm')[0].reset();
-                    orderstable.ajax.reload();
+                    location.href = base_url + 'admin/order/' + res.order_number;
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {

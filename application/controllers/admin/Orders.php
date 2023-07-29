@@ -106,11 +106,12 @@ class Orders extends MY_Controller {
                 $timestamp = time();
                 $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
                 $dt->setTimestamp($timestamp);
+                $order_number = $this->generateRandomString(20);
                 $odata = [
                     'total' => $this->session->userdata('total'),
                     'order_date' => $dt->format('Y-m-d H:i:s'),
                     'member_id' => $this->session->userdata('member_id'),
-                    'order_number' => $this->generateRandomString(20)
+                    'order_number' => $order_number
                 ];
 
                 $order_id = $this->orders_model->addOrder($odata);
@@ -144,6 +145,7 @@ class Orders extends MY_Controller {
                 }
 
                 $output['message'] = 'Order added successfully';
+                $output['order_number'] = $order_number;
 
             } else {
                 $output['error'] = TRUE;
